@@ -11,7 +11,15 @@ A comprehensive, professional-grade penetration testing tool for web application
 
 ## 🚀 Quick Start
 
-**Using Docker (Easiest):**
+**Using Docker Hub (Fastest - No Build Required!):**
+```bash
+# Pull and run instantly!
+docker pull mohseenjamall/apjson:latest
+docker run --rm -v $(pwd)/results:/app/scan_results \
+  mohseenjamall/apjson:latest https://example.com
+```
+
+**Or Build Locally:**
 ```bash
 git clone https://github.com/mohseenjamall/apjson.git
 cd apjson
@@ -19,7 +27,7 @@ docker build -t apjson:latest .
 docker run --rm -v $(pwd)/results:/app/scan_results apjson:latest https://example.com
 ```
 
-**Using Pre-built Binary:**
+**Using Native Binary:**
 ```bash
 git clone https://github.com/mohseenjamall/apjson.git
 cd apjson
@@ -65,6 +73,25 @@ go build -o apjson main.go
 ## 🚀 Installation
 
 ### Option 1: Docker (Recommended) 🐳
+
+**Easiest Way - Pull from Docker Hub:**
+```bash
+# No build needed! Just pull and run
+docker pull mohseenjamall/apjson:latest
+
+# Run a scan
+docker run --rm -v $(pwd)/scan_results:/app/scan_results \
+  mohseenjamall/apjson:latest https://example.com
+
+# Or with Docker Compose - create docker-compose.yml:
+services:
+  apjson:
+    image: mohseenjamall/apjson:latest
+    volumes:
+      - ./scan_results:/app/scan_results
+```
+
+**Or Build from Source:**
 
 The easiest way to get started! No need to install Go or dependencies.
 
