@@ -2,11 +2,34 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Go Version">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" alt="Docker">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=for-the-badge" alt="Platform">
 </p>
 
-A comprehensive, professional-grade penetration testing tool for web application security assessment. Built in Go for high performance and easy deployment.
+A comprehensive, professional-grade penetration testing tool for web application security assessment. Built in Go for high performance and easy deployment. **Now with Docker support for instant deployment!** 🐳
+
+## 🚀 Quick Start
+
+**Using Docker (Easiest):**
+```bash
+git clone https://github.com/mohseenjamall/apjson.git
+cd apjson
+docker build -t apjson:latest .
+docker run --rm -v $(pwd)/results:/app/scan_results apjson:latest https://example.com
+```
+
+**Using Pre-built Binary:**
+```bash
+git clone https://github.com/mohseenjamall/apjson.git
+cd apjson
+go build -o apjson main.go
+./apjson https://example.com
+```
+
+📖 **Full documentation:** [Installation](#-installation) | [Docker Guide](DOCKER.md) | [Usage](#-usage)
+
+---
 
 ## ✨ Features
 
@@ -27,7 +50,9 @@ A comprehensive, professional-grade penetration testing tool for web application
 #### Vulnerability Detection
 - **CORS Misconfigurations** - Wildcard origins, null bypass, credential exposure
 - **Security Header Analysis** - Missing CSP, HSTS, X-Frame-Options, etc.
-- **Injection Testing** - SQL, XSS, Command Injection *(coming soon)*
+- **SQL Injection Testing** - Time-based, Error-based, Boolean-based blind ✅
+- **XSS Detection** - Context-aware with polyglot payloads ✅
+- **Subdomain Enumeration** - Passive and active discovery with takeover detection ✅
 - **Authentication Bypass** - JWT, session fixation, default credentials *(optional)*
 - **WAF Detection** - Identifies security products *(optional)*
 
@@ -39,7 +64,34 @@ A comprehensive, professional-grade penetration testing tool for web application
 
 ## 🚀 Installation
 
-### Prerequisites
+### Option 1: Docker (Recommended) 🐳
+
+The easiest way to get started! No need to install Go or dependencies.
+
+```bash
+# Clone the repository
+git clone https://github.com/mohseenjamall/apjson.git
+cd apjson
+
+# Build the Docker image
+docker build -t apjson:latest .
+
+# Run a scan
+docker run --rm -v $(pwd)/scan_results:/app/scan_results apjson:latest https://example.com
+```
+
+**Or using Docker Compose:**
+```bash
+docker-compose run --rm apjson https://example.com
+```
+
+📖 **Full Docker documentation:** [DOCKER.md](DOCKER.md)
+
+---
+
+### Option 2: Native Binary
+
+#### Prerequisites
 
 #### 1. Install Go (Required)
 
@@ -108,7 +160,41 @@ go install
 
 ## 📖 Usage
 
-### Basic Scan
+### Docker Usage 🐳
+
+#### Basic Scan
+```bash
+docker run --rm -v $(pwd)/scan_results:/app/scan_results apjson:latest https://example.com
+```
+
+#### Full Security Scan
+```bash
+docker run --rm \
+  -v $(pwd)/scan_results:/app/scan_results \
+  apjson:latest \
+  --enable-secrets \
+  --enable-cors \
+  --enable-injection \
+  --enable-subdomains \
+  --threads 16 \
+  --depth 4 \
+  https://target.com
+```
+
+#### Using Docker Compose
+```bash
+# Basic scan
+docker-compose run --rm apjson https://example.com
+
+# With all features
+docker-compose run --rm apjson --enable-injection --enable-subdomains https://target.com
+```
+
+---
+
+### Native Binary Usage
+
+#### Basic Scan
 
 ```bash
 # Scan a website
