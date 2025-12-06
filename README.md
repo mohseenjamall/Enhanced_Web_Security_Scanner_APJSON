@@ -1,345 +1,310 @@
-# Enhanced Web Security Scanner
+# Enhanced Web Security Scanner (APJSON v3.0)
 
-## Introduction
+<p align="center">
+  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go" alt="Go Version">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=for-the-badge" alt="Platform">
+</p>
 
-The Enhanced Web Security Scanner is a comprehensive, automated tool designed to assess web application security through in-depth crawling, endpoint discovery, and vulnerability detection. It combines several powerful security tools into a unified, easy-to-use bash script that systematically identifies potential security risks in web applications.
+A comprehensive, professional-grade penetration testing tool for web application security assessment. Built in Go for high performance and easy deployment.
 
-![Security Scanner Banner](https://example.com/banner.png)
+## ✨ Features
 
-## Features
+### 🔍 Discovery & Crawling
+- **Advanced Web Crawling** - Powered by Katana for efficient site discovery
+- **JavaScript Analysis** - Extracts and analyzes JS/JSON files
+- **API Endpoint Detection** - Identifies REST, GraphQL, and other API endpoints
+- **Subdomain Enumeration** - Multi-source subdomain discovery *(optional)*
 
-- **Comprehensive Crawling**: Leverages Katana for efficient web content discovery
-- **JavaScript Analysis**: Extracts and analyzes JavaScript files for security vulnerabilities
-- **API Endpoint Detection**: Identifies potential API endpoints and tests them for vulnerabilities
-- **Parameter Testing**: Optional fuzzing of URL parameters to detect injection flaws
-- **Multiple Discovery Methods**: Combined approach using direct crawling, historical data (Wayback), and other sources
-- **Vulnerability Classification**: Automatic categorization of findings by severity (Critical, High, Medium, Low)
-- **Interactive HTML Reports**: Generates comprehensive, easy-to-navigate HTML reports
-- **Parallel Processing**: Optimized performance with configurable concurrent operations
-- **Robust Error Handling**: Graceful recovery from failures with detailed logging
-- **Flexible Configuration**: Customizable settings via configuration file or command-line parameters
+### 🛡️ Security Testing
 
-## Requirements
+#### Secret Detection
+- **20+ Credential Types** - AWS, GCP, Azure, GitHub, Slack, Stripe, JWT, and more
+- **Entropy-Based Detection** - Finds unknown secrets using Shannon entropy analysis
+- **False-Positive Filtering** - Smart exclusion patterns
+- **Confidence Scoring** - Each finding rated by confidence level
 
-### Essential Tools
-- Bash (version 4.0+)
-- curl
-- grep
-- awk
-- sed
-- jq
-- md5sum
-- openssl
+#### Vulnerability Detection
+- **CORS Misconfigurations** - Wildcard origins, null bypass, credential exposure
+- **Security Header Analysis** - Missing CSP, HSTS, X-Frame-Options, etc.
+- **Injection Testing** - SQL, XSS, Command Injection *(coming soon)*
+- **Authentication Bypass** - JWT, session fixation, default credentials *(optional)*
+- **WAF Detection** - Identifies security products *(optional)*
 
-### Optional Security Tools
-- [Nuclei](https://github.com/projectdiscovery/nuclei) - Vulnerability scanner
-- [Katana](https://github.com/projectdiscovery/katana) - Web crawling framework
-- [waybackurls](https://github.com/tomnomnom/waybackurls) - Fetch URLs from the Wayback Machine
-- [gau](https://github.com/lc/gau) - Get All URLs
-- [httpx](https://github.com/projectdiscovery/httpx) - HTTP toolkit
-- [ffuf](https://github.com/ffuf/ffuf) - Fast web fuzzer
+### 📊 Reporting
+- **Interactive HTML Reports** - Beautiful, color-coded findings
+- **JSON Export** - Machine-readable format for integration
+- **CVSS Scoring** - Industry-standard severity ratings
+- **PDF Reports** - Professional documentation *(optional)*
 
-## Installation
+## 🚀 Installation
 
-### Quick Setup
+### Prerequisites
 
-1. Download the script:
-```bash
-curl -O https://raw.githubusercontent.com/yourusername/security-scanner/main/webscan.sh
+#### 1. Install Go (Required)
+
+**Windows:**
+```powershell
+# Using winget
+winget install GoLang.Go
+
+# Or download from: https://go.dev/dl/
 ```
 
-2. Make it executable:
+**Linux:**
 ```bash
-chmod +x webscan.sh
+wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.5.linux-amd64.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-3. Run the script:
+**macOS:**
 ```bash
-./webscan.sh
+brew install go
 ```
 
-The script will check for required dependencies and guide you through installing any missing components.
-
-### Dependencies Installation
-
-#### Install Required System Tools
-
-For Debian/Ubuntu:
+Verify installation:
 ```bash
-apt update
-apt install -y curl grep gawk sed jq openssl
+go version  # Should show go1.21 or higher
 ```
 
-For CentOS/RHEL:
+#### 2. Install Security Tools (Optional but Recommended)
+
 ```bash
-yum install -y curl grep gawk sed jq openssl
-```
+# Install Nuclei for vulnerability scanning
+go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
-For macOS (using Homebrew):
-```bash
-brew install curl grep gawk gnu-sed jq openssl
-```
-
-#### Install Go Security Tools
-
-If you have Go installed:
-```bash
-# Install Nuclei
-go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-
-# Install Katana
+# Install Katana for web crawling
 go install github.com/projectdiscovery/katana/cmd/katana@latest
 
-# Install waybackurls
-go install github.com/tomnomnom/waybackurls@latest
-
-# Install gau
-go install github.com/lc/gau/v2/cmd/gau@latest
-
-# Install httpx
+# Install httpx for HTTP probing
 go install github.com/projectdiscovery/httpx/cmd/httpx@latest
 
-# Install ffuf
-go install github.com/ffuf/ffuf@latest
-```
+# Install subfinder for subdomain enumeration (optional)
+go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
 
-Add Go bin directory to your PATH:
-```bash
+#  Add Go bin to PATH if not already
 echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## Usage
-
-### Basic Usage
-
-Scan a website:
-```bash
-./webscan.sh https://example.com
-```
-
-The script will prompt for input if no URL is provided:
-```bash
-./webscan.sh
-# It will then prompt: Enter target URL:
-```
-
-### Command Options
-
-The script accepts various command-line options:
+### Building APJSON
 
 ```bash
-./webscan.sh [options] [URL]
+# Clone the repository
+git clone https://github.com/mohseenjamall/apjson.git
+cd apjson
 
-Options:
-  -h, --help                  Show this help message
-  -v, --verbose               Increase verbosity (can be used multiple times)
-  -t, --threads NUMBER        Set maximum threads (default: 8)
-  -d, --depth NUMBER          Set crawl depth (default: 3)
-  -o, --output DIRECTORY      Set output directory
-  -c, --config FILE           Use custom config file
-  --timeout SECONDS           Set scan timeout (default: 600)
-  --download-timeout SECONDS  Set download timeout (default: 30)
-  --enable-wayback            Enable Wayback Machine URL discovery
-  --enable-gau                Enable GAU URL discovery
-  --custom-templates DIR      Use custom Nuclei templates
+# Download dependencies
+go mod download
+
+# Build the binary
+go build -o apjson main.go
+
+# Or install globally
+go install
 ```
 
-### Output
+## 📖 Usage
 
-The scanner creates a structured output directory containing:
-
-```
-[domain]_[timestamp]/
-├── js_files/                  # JavaScript and JSON files
-│   ├── js_urls.txt            # List of discovered JS files
-│   ├── json_urls.txt          # List of discovered JSON files
-│   └── downloaded/            # Downloaded files for analysis
-├── api_endpoints/             # API-related discoveries
-│   ├── api_urls.txt           # Potential API endpoints
-│   ├── param_urls.txt         # URLs with parameters
-│   ├── active_endpoints.txt   # Verified active endpoints
-│   └── ...
-├── reports/                   # Analysis reports
-│   ├── critical_vulns.txt     # Critical vulnerabilities
-│   ├── high_vulns.txt         # High-severity vulnerabilities
-│   ├── medium_vulns.txt       # Medium-severity vulnerabilities
-│   ├── low_vulns.txt          # Low-severity vulnerabilities
-│   ├── report.html            # Interactive HTML report
-│   ├── scan_summary.json      # JSON summary of findings
-│   └── ...
-├── crawl_results.txt          # All discovered URLs
-├── scan_[timestamp].log       # Detailed log file
-└── scan_state.json            # Scan state information
-```
-
-## Configuration
-
-The script uses a configuration file located at `~/.webscan_config`. This file is automatically created on first run with default values:
+### Basic Scan
 
 ```bash
-# Web Security Scanner Configuration
-MAX_THREADS=8
-DOWNLOAD_TIMEOUT=30
-SCAN_TIMEOUT=600
-CRAWL_DEPTH=3
-OUTPUT_DIR="./scan_results"
-USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-VERBOSE=1
-ENABLE_WAYBACK=false
-ENABLE_GAU=false
-CUSTOM_NUCLEI_TEMPLATES=""
+# Scan a website
+./apjson https://example.com
+
+# With custom output directory
+./apjson -o ./my_results https://example.com
+
+# Verbose mode
+./apjson -v https://example.com
 ```
 
-You can edit this file to customize default behavior.
-
-## Understanding Reports
-
-### HTML Report
-
-The HTML report (`reports/report.html`) provides a comprehensive overview of scan results:
-
-- **Executive Summary**: Key statistics and vulnerability counts
-- **Vulnerability Details**: Collapsible sections for each severity level
-- **Scan Details**: Configuration and scan parameters
-- **Interactive Elements**: Expandable sections for detailed information
-
-### Vulnerability Classification
-
-Findings are classified into four severity levels:
-
-1. **Critical**: Severe vulnerabilities requiring immediate attention (RCE, SQLi, etc.)
-2. **High**: Significant security issues with high potential impact
-3. **Medium**: Moderate security issues that should be addressed
-4. **Low**: Minor security concerns with limited impact
-
-### JSON Summary
-
-The `reports/scan_summary.json` file contains structured data about the scan:
-
-```json
-{
-  "scan_id": "abcd1234",
-  "target": "https://example.com",
-  "timestamp": "2023-05-01T12:34:56Z",
-  "duration": "00:15:30",
-  "stats": {
-    "total_urls": 250,
-    "js_files": 45,
-    "json_files": 12,
-    "api_endpoints": 18,
-    "downloaded_files": 57,
-    "analyzed_files": 57,
-    "vulnerabilities": {
-      "total": 8,
-      "critical": 1,
-      "high": 2,
-      "medium": 3,
-      "low": 2
-    }
-  }
-}
-```
-
-## Advanced Usage
-
-### Custom Nuclei Templates
-
-You can use custom Nuclei templates for specialized scanning:
+### Advanced Options
 
 ```bash
-./webscan.sh --custom-templates /path/to/templates https://example.com
+# Full feature scan
+./apjson \
+  --threads 16 \
+  --depth 5 \
+  --enable-secrets \
+  --enable-cors \
+  --enable-subdomains \
+  --enable-injection \
+  --pdf-report \
+  https://example.com
+
+# Stealth mode (slower, less detectabale)
+./apjson --stealth-mode https://example.com
+
+# Authentication bypass testing (use with caution!)
+./apjson --enable-auth-tests https://example.com
 ```
 
-Or set in config:
+### Configuration File
+
+Create `~/.apjson.yaml`:
+
+```yaml
+max_threads: 16
+crawl_depth: 4
+scan_timeout: 900
+output_dir: "./scans"
+verbose: true
+
+# Feature toggles
+enable_secrets: true
+enable_cors: true
+enable_subdomains: false
+enable_auth_tests: false  # Requires explicit authorization
+enable_injection: true
+enable_ssl_scan: true
+enable_waf_detect: true
+
+# Reporting
+pdf_report: true
+cvss_scoring: true
+
+# Stealth settings
+stealth_mode: false
+requests_per_second: 10
+request_delay_ms: 100
+```
+
+Then run:
 ```bash
-echo 'CUSTOM_NUCLEI_TEMPLATES="/path/to/templates"' >> ~/.webscan_config
+./apjson --config ~/.apjson.yaml https://example.com
 ```
 
-### Historical URL Discovery
+## 📋 Command-Line Flags
 
-Enable Wayback Machine and/or GAU for historical URL discovery:
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-t, --threads` | 8 | Maximum concurrent threads |
+| `-d, --depth` | 3 | Crawl depth |
+| `--timeout` | 600 | Scan timeout (seconds) |
+| `-o, --output` | `./scan_results` | Output directory |
+| `-v, --verbose` | false | Verbose output |
+| `--enable-secrets` | true | Enable secret detection |
+| `--enable-cors` | true | Enable CORS testing |
+| `--enable-subdomains` | false | Enable subdomain enumeration |
+| `--enable-auth-tests` | false | Enable auth bypass tests |
+| `--enable-injection` | true | Enable injection testing |
+| `--enable-ssl-scan` | false | Enable SSL/TLS scanning |
+| `--enable-waf-detect` | true | Enable WAF detection |
+| `--stealth-mode` | false | Enable stealth scanning |
+| `--pdf-report` | false | Generate PDF report |
+| `--cvss-scoring` | true | Calculate CVSS scores |
+
+## 📂 Output Structure
+
+```
+example.com_20231206_143022/
+├── js_files/               # Downloaded JavaScript files
+│   └── downloaded/
+├── api_endpoints/          # Discovered API endpoints
+├── reports/                # Generated reports
+│   ├── report.html         # Interactive HTML report
+│   ├── scan_summary.json   # Machine-readable results
+│   └── report.pdf          # PDF report (if enabled)
+└── screenshots/            # Visual evidence (future)
+```
+
+## 🔍 Detection Capabilities
+
+### Secrets Detected
+
+| Category | Examples |
+|----------|----------|
+| **Cloud** | AWS Access/Secret Keys, GCP API Keys, Azure Connection Strings |
+| **Version Control** | GitHub PATs, GitHub Tokens, GitLab Tokens |
+| **APIs** | Stripe, Twilio, SendGrid, Mailgun, Slack |
+| **Databases** | MongoDB, MySQL, PostgreSQL connection strings |
+| **Crypto** | RSA/DSA/EC Private Keys, PGP Keys |
+| **Auth** | JWT Tokens, OAuth Tokens, API Keys |
+| **High Entropy** | Unknown base64-encoded secrets |
+
+### CORS Issues Detected
+
+- Wildcard origin (`*`) with credentials
+- Null origin bypass
+- Untrusted origin reflection
+- HTTP origin on HTTPS site
+- Missing security headers
+
+## ⚠️ Legal & Ethical Use
+
+**CRITICAL:** Only use this tool on websites and applications you own or have explicit written permission to test.
+
+- Unauthorized security testing may be **illegal** in many jurisdictions
+- This tool can generate significant traffic and trigger security alerts
+- Features like `--enable-auth-tests` perform aggressive testing
+- Always obtain proper authorization before scanning
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+apjson/
+├── main.go                 # Entry point
+├── cmd/                    # CLI commands
+│   └── root.go
+├── pkg/                    # Core packages
+│   ├── config/             # Configuration management
+│   ├── scanner/            # Main scanner orchestrator
+│   ├── secrets/            # Secret detection
+│   ├── cors/               # CORS testing
+│   ├── report/             # Report generation
+│   └── ...                 # Additional modules
+└── go.mod                  # Go module file
+```
+
+### Running Tests
 
 ```bash
-./webscan.sh --enable-wayback --enable-gau https://example.com
+go test ./...
 ```
 
-### Parameter Fuzzing
-
-The script can automatically test URL parameters for common vulnerabilities if ffuf is installed:
+### Building for Multiple Platforms
 
 ```bash
-# This functionality is automatically used when ffuf is available
-# No special flags needed
+# Windows
+GOOS=windows GOARCH=amd64 go build -o apjson.exe
+
+# Linux
+GOOS=linux GOARCH=amd64 go build -o apjson
+
+# macOS
+GOOS=darwin GOARCH=amd64 go build -o apjson
 ```
 
-## Troubleshooting
+## 🤝 Contributing
 
-### Common Issues
-
-#### Missing Tools
-If the script reports missing tools, install them as described in the Installation section.
-
-#### Permission Denied
-```bash
-chmod +x webscan.sh
-```
-
-#### Network Issues
-- Ensure you have active internet access
-- Check if the target website is accessible
-- Try increasing timeouts in the configuration file
-
-#### High Resource Usage
-- Reduce MAX_THREADS in the configuration file
-- Decrease CRAWL_DEPTH for faster scanning
-- Use a more focused target URL with a specific path
-
-### Logs
-
-Detailed logs are stored in the scan output directory:
-```bash
-cat [domain]_[timestamp]/scan_[timestamp].log
-```
-
-Increase verbosity for more detailed logs:
-```bash
-./webscan.sh --verbose --verbose https://example.com
-```
-
-## Security Considerations
-
-- Always ensure you have proper authorization before scanning any website
-- This tool is designed for security professionals and system administrators
-- Unauthorized security scanning may be illegal in many jurisdictions
-- Use responsibly and ethically
-
-## Contribution
-
-Contributions are welcome! To contribute:
+Contributions are welcome! Please:
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b new-feature`
-3. Commit your changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin new-feature`
+3. Commit changes: `git commit -am 'Add feature'`
+4. Push to branch: `git push origin new-feature`
 5. Submit a pull request
 
-## License
+## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - see LICENSE file for details
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- The ProjectDiscovery team for Nuclei and Katana
-- Tom Hudson for waybackurls
-- Corben Leo for gau
-- The ffuf team for the fast web fuzzer
-- All open-source security tools that made this project possible
+- [ProjectDiscovery](https://github.com/projectdiscovery) - Nuclei, Katana, httpx, subfinder
+- [Cobra](https://github.com/spf13/cobra) - CLI framework
+- [Fatih Color](https://github.com/fatih/color) - Terminal colors
 
-## Contact
+## 📧 Contact
 
-For questions, feedback, or issues, please open an issue on the GitHub repository.
+**Author:** Mohsen Jamal  
+**Repository:** [github.com/mohseenjamall/apjson](https://github.com/mohseenjamall/apjson)
 
 ---
 
-*Disclaimer: This tool is provided for educational and legitimate security testing purposes only. The authors are not responsible for any misuse or damage caused by this program. Always ensure you have proper authorization before conducting security testing.*
+**Disclaimer:** This tool is provided for educational and authorized security testing purposes only. The authors are not responsible for any misuse or damage caused by this program.

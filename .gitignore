@@ -1,0 +1,27 @@
+# Binaries
+apjson.exe
+apjson
+
+# Output directories
+scan_results/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log
+
+# Arabic documentation (local only)
+QUICKSTART_AR.md
+
+# Go
+*.test
+*.out
