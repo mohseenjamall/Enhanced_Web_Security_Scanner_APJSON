@@ -1,0 +1,48 @@
+# Git
+.git/
+.gitignore
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+apjson
+
+# Test and coverage
+*.test
+*.out
+coverage.txt
+
+# Scan results
+scan_results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation (included in image if needed)
+*.md
+!README.md
+!INSTALL.md
+
+# Temporary files
+*.tmp
+*.log
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Arabic docs (local only)
+QUICKSTART_AR.md
+
+# Testing files
+TESTING_*.md

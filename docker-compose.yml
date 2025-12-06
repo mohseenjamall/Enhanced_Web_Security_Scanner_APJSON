@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  apjson:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mohseenjamall/apjson:latest
+    container_name: apjson-scanner
+
+    # Environment variables
+    environment:
+      - OUTPUT_DIR=/app/scan_results
+      - THREADS=8
+      - DEPTH=3
+      - TIMEOUT=600
+
+    # Volumes for persistent data
+    volumes:
+      - ./scan_results:/app/scan_results
+      - ./config:/app/config:ro # Read-only config
+
+    # Network mode
+    network_mode: "host"
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+
+    # Read-only root filesystem (except volumes)
+    read_only: false
+
+    # Restart policy
+    restart: "no"
+
+    # Command (override with target URL)
+    # Usage: docker-compose run apjson https://example.com
+    command: [ "--help" ]
+  # Optional: Web dashboard (future enhancement)
+  # dashboard:
+  #   build:
+  #     context: ./dashboard
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - apjson
+  #   volumes:
+  #     - ./scan_results:/scan_results:ro
+
+  # Networks
+networks:
+  default:
+    driver: bridge
+
+# Volumes
+volumes:
+  scan_results:
+    driver: local
