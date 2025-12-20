@@ -1,0 +1,55 @@
+run:
+  timeout: 5m
+  skip-dirs:
+    - vendor
+    - scan_results
+    - tests
+
+linters:
+  enable:
+    - gofmt
+    - goimports
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - misspell
+    - gocritic
+    
+  disable:
+    - deadcode
+    - varcheck
+    - structcheck
+
+linters-settings:
+  gofmt:
+    simplify: true
+  goimports:
+    local-prefixes: github.com/mohseenjamall/apjson
+  govet:
+    check-shadowing: false
+  errcheck:
+    check-blank: false
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gocritic
+    - path: pkg/injection/
+      linters:
+        - errcheck  # HTTP operations may fail
+  max-issues-per-linter: 50
+  max-same-issues: 10
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
