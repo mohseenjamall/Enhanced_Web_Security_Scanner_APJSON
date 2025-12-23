@@ -5,6 +5,9 @@
   <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" alt="Docker">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue?style=for-the-badge" alt="Platform">
+  <br>
+  <img src="https://github.com/mohseenjamall/apjson/workflows/CI/badge.svg" alt="CI Status">
+  <img src="https://github.com/mohseenjamall/apjson/workflows/Docker/badge.svg" alt="Docker Build">
 </p>
 
 A comprehensive, professional-grade penetration testing tool for web application security assessment. Built in Go for high performance and easy deployment. **Now with Docker support for instant deployment!** 🐳
